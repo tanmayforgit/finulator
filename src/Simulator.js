@@ -27,17 +27,20 @@ class Simulator {
   simulateOneMonth() {
     const ledgers = this.#getLedgers();
 
-    console.log('ledgers', ledgers);
+    console.log("ledgers", ledgers);
     const simulatedFinSituation = this.#constructFinSituation(ledgers);
 
     console.log("simulated situation", simulatedFinSituation);
     this.monthlyLedgers.set(this.monthToSimulate, ledgers);
-    this.monthlyFinancialSituations.set(this.monthToSimulate, simulatedFinSituation);
+    this.monthlyFinancialSituations.set(
+      this.monthToSimulate,
+      simulatedFinSituation
+    );
     this.currentMonth = this.currentMonth + 1;
     this.monthToSimulate = this.monthToSimulate + 1;
     this.currentFinSituation = simulatedFinSituation;
 
-    console.log('this after a round', this)
+    console.log("this after a round", this);
 
     if (simulatedFinSituation.bankBalance < 0) {
       return false;
@@ -48,8 +51,8 @@ class Simulator {
 
   #constructFinSituation(ledgers) {
     console.log("current month", this.currentMonth);
-    console.log('current fin situation', this.currentFinSituation);
-    const currentFinSituation = {...this.currentFinSituation}
+    console.log("current fin situation", this.currentFinSituation);
+    const currentFinSituation = { ...this.currentFinSituation };
     return ledgers.reduce(this.#addLedgerToFinSituation, currentFinSituation);
   }
 
@@ -111,8 +114,9 @@ class Simulator {
     if (this.#itIsYearEnd()) {
       const yearNumber = this.#getYearOfSimulationMonth();
       const yearlyExpense =
-        Math.pow(1 + this.yearly_inflation_rate / 100, yearNumber) *
-        this.yearlyExpense;
+        Math.pow(1 + this.yearlyInflationRate / 100, yearNumber) *
+        this.currentFinSituation.yearlyExpense;
+      console.log("yearlyExpense", yearlyExpense);
       return [
         {
           type: "bank_balance_debit",

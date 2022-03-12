@@ -16,15 +16,15 @@ const SimulationPlayground = () => {
 
   const simulate = (event) => {
     event.preventDefault();
-    const inflationRate = inflationRateRef.current.value;
-    const noOfMonths = noOfMonthRef.current.value;
+    const inflationRate = parseInt(inflationRateRef.current.value);
+    const noOfMonths = parseInt(noOfMonthRef.current.value);
     const simulator = new Simulator(
       userDetails,
       initialFinSituation,
       [],
       inflationRate
     );
-
+    console.log('init situation', initialFinSituation);
     const [simulationSucceeded, simulation] =
       simulator.simulateForMonths(noOfMonths);
 

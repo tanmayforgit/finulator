@@ -10,6 +10,7 @@ const storeReducer = (state = {}, action) => {
     case "set_present_financial_situation":
       console.log("storing present financial situation");
       console.log(state);
+      console.log('action', action)
       return {
         ...state,
         ...{ presentFinancialSituation: action.presentFinancialSituation },
