@@ -61,10 +61,10 @@ class Simulator {
     console.log(ledger);
     switch (ledger.type) {
       case "bank_balance_credit":
-        finSituation.bankBalance = finSituation.bankBalance + ledger.amount;
+        finSituation.bankBalance = finSituation.bankBalance + Math.round(ledger.amount);
         return finSituation;
       case "bank_balance_debit":
-        finSituation.bankBalance = finSituation.bankBalance - ledger.amount;
+        finSituation.bankBalance = finSituation.bankBalance - Math.round(ledger.amount);
         return finSituation;
     }
   }
