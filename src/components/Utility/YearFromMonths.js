@@ -1,6 +1,6 @@
 const YearFromMonths = (props) => {
   const noOfMonths = props.months;
-  const year = Math.ceil(noOfMonths / 12);
+  const year = Math.floor(noOfMonths / 12);
   const month = noOfMonths % 12;
 
   switch (year) {
