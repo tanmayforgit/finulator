@@ -45,6 +45,8 @@
 }
 
 .header .user_nav_info {
-  float: right;
-  width: 50%;
+  position: absolute;
+  right: 0;
+  width: 300px;
+  color: white;
 }

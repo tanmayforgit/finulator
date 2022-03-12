@@ -143,6 +143,9 @@ const PresentFinancialSituation = () => {
   } else {
     return (
       <div id="showPresentFinancialSituation">
+        <div className={classes.table_title}>
+          <h3>Your Current Financial Situation</h3>
+        </div>
         <table className={classes.table}>
           <thead>
             <th>Bank Balance</th>

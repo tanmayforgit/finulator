@@ -14,10 +14,8 @@ const MainHeader = (props) => {
                 Home
               </NavLink>
             </li>
-          </ul>
-          <ul className={classes.user_nav_info}>
-            <li>
-              <UserNavInfo/>
+            <li className={classes.user_nav_info}>
+              <UserNavInfo />
             </li>
           </ul>
         </nav>
