@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SimulationPlayground from "components/Simulations/SimulationPlayground";
+import classes from 'components/Table.module.css';
 
 const PresentFinancialSituation = () => {
   console.log("rendering PresentFinancialSituationComponent");
@@ -142,7 +143,7 @@ const PresentFinancialSituation = () => {
   } else {
     return (
       <div id="showPresentFinancialSituation">
-        <table>
+        <table className={classes.table}>
           <thead>
             <th>Bank Balance</th>
             <th>Monthly Income</th>

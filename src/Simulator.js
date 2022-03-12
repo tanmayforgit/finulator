@@ -105,7 +105,7 @@ class Simulator {
         type: "bank_balance_debit",
         amount: monthlyExpense,
         description:
-          "Inflation adjusted expense for month number" + this.monthToSimulate,
+          "Inflation adjusted expense for month number " + this.monthToSimulate,
       },
     ];
   }
@@ -121,7 +121,7 @@ class Simulator {
         {
           type: "bank_balance_debit",
           amount: yearlyExpense,
-          description: "inflation adjusted once a year expense",
+          description: "inflation adjusted once a year expense for year " + yearNumber,
         },
       ];
     } else {
@@ -135,18 +135,19 @@ class Simulator {
       {
         type: "bank_balance_credit",
         amount: monthlyIncome,
-        description: "Monthly Income for " + this.monthToSimulate,
+        description: "Monthly Income for month number " + this.monthToSimulate,
       },
     ];
   }
 
   #getYearlyIncomeLedgers() {
     if (this.#itIsYearEnd()) {
+      const yearNumber = this.#getYearOfSimulationMonth();
       return [
         {
           type: "bank_balance_credit",
           amount: this.initialFinSituation.yearlyIncome,
-          description: "Yearly Income",
+          description: "Yearly Income for year " + yearNumber,
         },
       ];
     } else {

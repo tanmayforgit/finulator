@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import SimulationRow from "./SimulationRow";
-import classes from './Simulation.module.css';
+import classes from 'components/Table.module.css';
 
 const Simulation = (props) => {
   const simulation = props.simulation;
@@ -32,7 +32,7 @@ const Simulation = (props) => {
 
   return (
     <Fragment>
-      <table className={classes.simulation_table}>
+      <table className={classes.table}>
         <thead>
           <th> Time Into Simulation</th>
           <th> Your Age (approx) </th>
@@ -45,6 +45,7 @@ const Simulation = (props) => {
             <SimulationRow
               finSituation={finSituation}
               month={month}
+              ledgers={simulation.monthlyLedgers.get(month)}
               userDetails={userDetails}
             />
           ))}
