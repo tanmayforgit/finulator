@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import SimulationRow from "./SimulationRow";
 const Simulation = (props) => {
   const simulation = props.simulation;
+  const simulationSucceeded = props.simulationSucceeded;
 
   console.log("simulation", simulation);
   const userDetails = simulation.userDetails;
@@ -28,20 +29,27 @@ const Simulation = (props) => {
   // console.log("tablerows", tableRows);
 
   return (
-    <table>
-      <thead>
-        <th> Time Into Simulation</th>
-        <th> Your Age (approx) </th>
-        <th>Bank Balance</th>
-        <th>Actions</th>
-        <th>Comments</th>
-      </thead>
-      <tbody>
-        {simulationRows.map(([month, finSituation], i) => (
-          <SimulationRow finSituation={finSituation} month={month} userDetails={userDetails}/>
-        ))}
-      </tbody>
-    </table>
+    <Fragment>
+      <table>
+        <thead>
+          <th> Time Into Simulation</th>
+          <th> Your Age (approx) </th>
+          <th>Bank Balance</th>
+          <th>Actions</th>
+          <th>Comments</th>
+        </thead>
+        <tbody>
+          {simulationRows.map(([month, finSituation], i) => (
+            <SimulationRow
+              finSituation={finSituation}
+              month={month}
+              userDetails={userDetails}
+            />
+          ))}
+        </tbody>
+      </table>
+      {!simulationSucceeded && <p>Simulation did not complete since your balance became negative </p>}
+    </Fragment>
   );
 };
 
