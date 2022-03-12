@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import SimulationRow from "./SimulationRow";
 import classes from './Simulation.module.css';
+
 const Simulation = (props) => {
   const simulation = props.simulation;
   const simulationSucceeded = props.simulationSucceeded;

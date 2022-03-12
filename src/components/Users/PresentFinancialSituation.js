@@ -63,19 +63,21 @@ const PresentFinancialSituation = () => {
         yearlyIncome: parseInt(yearlyIncome),
         monthlyExpense: parseInt(monthlyExpense),
         yearlyExpense: parseInt(yearlyExpense),
-      }
+      },
     };
 
     dispatchPresentFinancialSituation(dispatchObj);
-    setFormIsSubmitted(true);
+    setShowForm(false);
   };
 
-  const [formIsSubmitted, setFormIsSubmitted] = useState(false);
-
-  const showForm =
+  const [showForm, setShowForm] = useState(
     presentFinancialSituation === null ||
-    presentFinancialSituation === undefined ||
-    !formIsSubmitted;
+      presentFinancialSituation === undefined
+  );
+
+  const recapturePresentFinancialSituation = () => {
+    setShowForm(true);
+  }
 
   console.log(presentFinancialSituation);
   console.log(showForm);
@@ -142,43 +144,28 @@ const PresentFinancialSituation = () => {
       <div id="showPresentFinancialSituation">
         <table>
           <thead>
-            <th>
-              Bank Balance
-            </th>
-            <th>
-              Monthly Income
-            </th>
-            <th>
-              Monthly Expense
-            </th>
-            <th>
-              Yearly Income (such as bonuns etc)
-            </th>
+            <th>Bank Balance</th>
+            <th>Monthly Income</th>
+            <th>Monthly Expense</th>
+            <th>Yearly Income (such as bonuns etc)</th>
             <th>
               Yearly Expense (Any yearly expense separate from monthly expense)
             </th>
           </thead>
           <tbody>
             <tr>
-              <td>
-                {presentFinancialSituation.bankBalance}
-              </td>
-              <td>
-                {presentFinancialSituation.monthlyIncome}
-              </td>
-              <td>
-                {presentFinancialSituation.monthlyExpense}
-              </td>
-              <td>
-                {presentFinancialSituation.yearlyIncome}
-              </td>
-              <td>
-                {presentFinancialSituation.yearlyExpense}
-              </td>
+              <td>{presentFinancialSituation.bankBalance}</td>
+              <td>{presentFinancialSituation.monthlyIncome}</td>
+              <td>{presentFinancialSituation.monthlyExpense}</td>
+              <td>{presentFinancialSituation.yearlyIncome}</td>
+              <td>{presentFinancialSituation.yearlyExpense}</td>
             </tr>
           </tbody>
         </table>
-        <SimulationPlayground/>
+        <button onClick={recapturePresentFinancialSituation}>
+          Change your current financial situation
+        </button>
+        <SimulationPlayground />
       </div>
     );
   }
