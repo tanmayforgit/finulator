@@ -2,7 +2,7 @@ import YearFromMonths from "components/Utility/YearFromMonths";
 import AgeAfterMonths from "components/Utility/AgeAfterMonths";
 
 const SimulationRow = (props) => {
-  console.log('called')
+  console.log("called");
   const finSituation = props.finSituation;
   // const ledgers = props.ledgers;
   const month = props.month;

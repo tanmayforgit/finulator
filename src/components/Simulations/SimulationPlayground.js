@@ -11,8 +11,10 @@ const SimulationPlayground = () => {
   const initialFinSituation = useSelector(
     (state) => state.presentFinancialSituation
   );
+
   const [showSimulation, setShowSimulation] = useState(false);
   const [simulation, setSimulation] = useState();
+  const [simulationSucceeded, setSimulationSucceeded] = useState(false);
 
   const simulate = (event) => {
     event.preventDefault();
@@ -24,13 +26,15 @@ const SimulationPlayground = () => {
       [],
       inflationRate
     );
-    console.log('init situation', initialFinSituation);
-    const [simulationSucceeded, simulation] =
+    console.log("init situation", initialFinSituation);
+    const [simulationSuccessStatus, simulation] =
       simulator.simulateForMonths(noOfMonths);
 
-    console.log("simulation in playground", simulation);
     setShowSimulation(true);
     setSimulation(simulation);
+    if(simulationSuccessStatus) {
+      setSimulationSucceeded(true);
+    }
   };
 
   return (
@@ -48,7 +52,14 @@ const SimulationPlayground = () => {
           <button> Simulate</button>
         </div>
       </form>
-      <div>{showSimulation && <Simulation simulation={simulation}/>}</div>
+      <div>
+        {showSimulation && (
+          <Simulation
+            simulation={simulation}
+            simulationSucceeded={simulationSucceeded}
+          />
+        )}
+      </div>
     </Fragment>
   );
 };

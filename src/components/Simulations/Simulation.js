@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import SimulationRow from "./SimulationRow";
+import classes from './Simulation.module.css';
 const Simulation = (props) => {
   const simulation = props.simulation;
   const simulationSucceeded = props.simulationSucceeded;
@@ -30,7 +31,7 @@ const Simulation = (props) => {
 
   return (
     <Fragment>
-      <table>
+      <table className={classes.simulation_table}>
         <thead>
           <th> Time Into Simulation</th>
           <th> Your Age (approx) </th>
