@@ -4,10 +4,6 @@ import { useDispatch } from 'react-redux';
 import * as Constants from 'constants';
 
 const CaptureMandatoryUserDetailsModal = () => {
-  const storeUserMandatoryDetails = (event) => {
-    event.preventDefault();
-  }
-
   const ageRef = useRef();
   const genderRef = useRef();
 
@@ -15,7 +11,7 @@ const CaptureMandatoryUserDetailsModal = () => {
 
   const captureUserDetails = (event) => {
     event.preventDefault();
-    const age = ageRef.current.value;
+    const age = parseInt(ageRef.current.value);
     const gender = genderRef.current.value;
     const userDetails = {
       age: age,
@@ -46,7 +42,7 @@ const CaptureMandatoryUserDetailsModal = () => {
           </select>
         </div>
         <div className='form-actions'>
-          <button> Start Simulating</button>
+          <button> Explore </button>
         </div>
       </form>
     </Modal>
