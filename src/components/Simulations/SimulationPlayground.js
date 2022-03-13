@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import { Fragment } from "react";
 import { useSelector } from "react-redux";
 import Simulation from "./Simulation";
+import classes from "components/Table.module.css";
 
 const SimulationPlayground = () => {
   const noOfMonthRef = useRef();
@@ -37,21 +38,51 @@ const SimulationPlayground = () => {
     }
   };
 
+  const simVarClasses = `${classes.sim_var_child} ${classes.sim_var_container}`;
+
   return (
     <Fragment>
-      <form onSubmit={simulate}>
-        <div className="form-control">
-          <label htmlFor="no_of_months"> Number Of Months to simulate </label>
-          <input type="number" id="no_of_months" ref={noOfMonthRef} />
-        </div>
-        <div className="form-control">
-          <label htmlFor="inflation_rate"> Yearly Inflation Rate </label>
-          <input type="number" id="inflation_rate" ref={inflationRateRef} />
-        </div>
-        <div className="form-actions">
-          <button> Simulate</button>
-        </div>
-      </form>
+      <div class={classes.sim_var_container}>
+        <form onSubmit={simulate}>
+          <table>
+            <thead>
+              <th> Simulation Variable </th>
+              <th> Set Value </th>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <label htmlFor="no_of_months">
+                    {" "}
+                    Number Of Months to simulate{" "}
+                  </label>
+                </td>
+                <td>
+                  <input type="number" id="no_of_months" ref={noOfMonthRef} />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label htmlFor="inflation_rate">
+                    {" "}
+                    Yearly Inflation Rate{" "}
+                  </label>
+                </td>
+                <tr>
+                  <input
+                    type="number"
+                    id="inflation_rate"
+                    ref={inflationRateRef}
+                  />
+                </tr>
+              </tr>
+            </tbody>
+          </table>
+          <div>
+            <button> Simulate</button>
+          </div>
+        </form>
+      </div>
       <div>
         {showSimulation && (
           <Simulation
