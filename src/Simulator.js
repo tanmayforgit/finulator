@@ -25,6 +25,7 @@ class Simulator {
   }
 
   simulateOneMonth() {
+    this.#beforeSimulationProcedure();
     const ledgers = this.#getLedgers();
 
     console.log("ledgers", ledgers);
@@ -49,6 +50,27 @@ class Simulator {
     }
   }
 
+  #beforeSimulationProcedure() {
+    this.events.forEach((finEvent) => {
+      switch (finEvent.name) {
+        case "job_loss":
+          this.#simulateJobLoss(finEvent);
+      }
+    });
+  }
+
+  #simulateJobLoss(jobLossEvent) {
+    const implementationDetails = jobLossEvent.implementationDetails;
+    const monthToSimulate = this.monthToSimulate;
+    if (monthToSimulate >= implementationDetails.fromMonth && monthToSimulate <= implementationDetails.toMonth) {
+      this.currentFinSituation.monthlyIncome = 0;
+    }
+
+    if (monthToSimulate === implementationDetails.toMonth + 1){ // Job loss event just ended
+      this.currentFinSituation.monthlyIncome = implementationDetails.postJlMonthlyIncome;
+    }
+  }
+
   #constructFinSituation(ledgers) {
     console.log("current month", this.currentMonth);
     console.log("current fin situation", this.currentFinSituation);
@@ -61,10 +83,12 @@ class Simulator {
     console.log(ledger);
     switch (ledger.type) {
       case "bank_balance_credit":
-        finSituation.bankBalance = finSituation.bankBalance + Math.round(ledger.amount);
+        finSituation.bankBalance =
+          finSituation.bankBalance + Math.round(ledger.amount);
         return finSituation;
       case "bank_balance_debit":
-        finSituation.bankBalance = finSituation.bankBalance - Math.round(ledger.amount);
+        finSituation.bankBalance =
+          finSituation.bankBalance - Math.round(ledger.amount);
         return finSituation;
     }
   }
@@ -91,6 +115,8 @@ class Simulator {
         return this.#getMonthlyIncomeLedgers();
       case "yearly_income":
         return this.#getYearlyIncomeLedgers();
+      case "job_loss":
+        return [];
     }
   }
 
@@ -121,7 +147,8 @@ class Simulator {
         {
           type: "bank_balance_debit",
           amount: yearlyExpense,
-          description: "inflation adjusted once a year expense for year " + yearNumber,
+          description:
+            "inflation adjusted once a year expense for year " + yearNumber,
         },
       ];
     } else {
@@ -130,7 +157,7 @@ class Simulator {
   }
 
   #getMonthlyIncomeLedgers() {
-    const monthlyIncome = this.initialFinSituation.monthlyIncome;
+    const monthlyIncome = this.currentFinSituation.monthlyIncome;
     return [
       {
         type: "bank_balance_credit",

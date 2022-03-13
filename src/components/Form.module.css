@@ -33,3 +33,7 @@
 .form_title {
   text-align: center;
 }
+
+.form_error_container {
+  color: red;
+}

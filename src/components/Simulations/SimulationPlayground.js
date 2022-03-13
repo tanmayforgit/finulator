@@ -4,11 +4,13 @@ import { Fragment } from "react";
 import { useSelector } from "react-redux";
 import Simulation from "./Simulation";
 import classes from "components/Table.module.css";
+import UserChosenEvents from "components/Events/UserChosenEvents";
 
 const SimulationPlayground = () => {
   const noOfMonthRef = useRef();
   const inflationRateRef = useRef();
   const userDetails = useSelector((state) => state.userDetails);
+  const userChosenEvents = useSelector((state) => state.userSelectedEvents);
   const initialFinSituation = useSelector(
     (state) => state.presentFinancialSituation
   );
@@ -24,7 +26,7 @@ const SimulationPlayground = () => {
     const simulator = new Simulator(
       userDetails,
       initialFinSituation,
-      [],
+      userChosenEvents,
       inflationRate
     );
     console.log("init situation", initialFinSituation);
@@ -42,6 +44,7 @@ const SimulationPlayground = () => {
 
   return (
     <Fragment>
+      <UserChosenEvents/>
       <div class={classes.sim_var_container}>
         <form onSubmit={simulate}>
           <table>
