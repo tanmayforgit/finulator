@@ -32,7 +32,7 @@ const SimulationPlayground = () => {
 
     setShowSimulation(true);
     setSimulation(simulation);
-    if(simulationSuccessStatus) {
+    if (simulationSuccessStatus) {
       setSimulationSucceeded(true);
     }
   };

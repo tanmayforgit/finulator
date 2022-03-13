@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SimulationPlayground from "components/Simulations/SimulationPlayground";
-import classes from 'components/Table.module.css';
+import classes from "components/Table.module.css";
+import formClasses from "components/Form.module.css";
+import { FaEdit } from "react-icons/fa";
 
 const PresentFinancialSituation = () => {
   console.log("rendering PresentFinancialSituationComponent");
@@ -78,78 +80,95 @@ const PresentFinancialSituation = () => {
 
   const recapturePresentFinancialSituation = () => {
     setShowForm(true);
-  }
+  };
 
   console.log(presentFinancialSituation);
   console.log(showForm);
 
   if (showForm) {
     return (
-      <form onSubmit={finInfoSubmitHandler}>
-        <div className="form-control">
-          <label htmlFor="current_bank_balance"> Current Bank Balance </label>
-          <input
-            type="number"
-            id="current_bank_balance"
-            onChange={bankBalanceChangeHandler}
-            value={bankBalance}
-          />
-        </div>
-        <div className="form-control">
-          <label htmlFor="monthly_income">
-            {" "}
-            Your monthly income (after taxes){" "}
-          </label>
-          <input
-            type="number"
-            id="monthly_income"
-            onChange={monthlyIncomeChangeHandler}
-            value={monthlyIncome}
-          />
-        </div>
-        <div className="form-control">
-          <label htmlFor="yearly_income"> Any additional yearly income </label>
-          <input
-            type="number"
-            id="yearly_income"
-            onChange={yearlyIncomeChangeHandler}
-            value={yearlyIncome}
-          />
-        </div>
-        <div className="form-control">
-          <label htmlFor="monthly_expense"> Your total monthly expense </label>
-          <input
-            type="number"
-            id="monthly_expense"
-            onChange={monthlyExpenseChangeHandler}
-            value={monthlyExpense}
-          />
-        </div>
-        <div className="form-control">
-          <label htmlFor="yearly_expense">
-            {" "}
-            Any additional yearly expense{" "}
-          </label>
-          <input
-            type="number"
-            id="yearly_expense"
-            onChange={yearlyExpenseChangeHandler}
-            value={yearlyExpense}
-          />
-        </div>
-        <button>Submit</button>
-      </form>
+      <div className={formClasses.form_container}>
+        <h3 className={formClasses.form_title}>
+          Your present financial situation
+        </h3>
+        <form
+          onSubmit={finInfoSubmitHandler}
+          className={formClasses.simple_form}
+        >
+          <div className="form-control">
+            <label htmlFor="current_bank_balance"> Current Bank Balance </label>
+            <input
+              type="number"
+              id="current_bank_balance"
+              onChange={bankBalanceChangeHandler}
+              value={bankBalance}
+            />
+          </div>
+          <div className="form-control">
+            <label htmlFor="monthly_income">
+              {" "}
+              Your monthly income (after taxes){" "}
+            </label>
+            <input
+              type="number"
+              id="monthly_income"
+              onChange={monthlyIncomeChangeHandler}
+              value={monthlyIncome}
+            />
+          </div>
+          <div className="form-control">
+            <label htmlFor="yearly_income">
+              {" "}
+              Any additional yearly income{" "}
+            </label>
+            <input
+              type="number"
+              id="yearly_income"
+              onChange={yearlyIncomeChangeHandler}
+              value={yearlyIncome}
+            />
+          </div>
+          <div className="form-control">
+            <label htmlFor="monthly_expense">
+              {" "}
+              Your total monthly expense{" "}
+            </label>
+            <input
+              type="number"
+              id="monthly_expense"
+              onChange={monthlyExpenseChangeHandler}
+              value={monthlyExpense}
+            />
+          </div>
+          <div className="form-control">
+            <label htmlFor="yearly_expense">
+              {" "}
+              Any additional yearly expense{" "}
+            </label>
+            <input
+              type="number"
+              id="yearly_expense"
+              onChange={yearlyExpenseChangeHandler}
+              value={yearlyExpense}
+            />
+          </div>
+          <button>Submit</button>
+        </form>
+      </div>
     );
   } else {
     return (
       <div id="showPresentFinancialSituation">
         <div className={classes.table_title}>
-          <h3>Your Current Financial Situation</h3>
+          <h3>
+            Your present financial situation{" "}
+            <FaEdit onClick={recapturePresentFinancialSituation} />
+          </h3>
         </div>
         <table className={classes.table}>
           <thead>
             <th>Bank Balance</th>
-            <th>Monthly Income</th>
+            <th>Monthly Income (After taxes)</th>
             <th>Monthly Expense</th>
             <th>Yearly Income (such as bonuns etc)</th>
             <th>
@@ -166,9 +185,6 @@ const PresentFinancialSituation = () => {
             </tr>
           </tbody>
         </table>
-        <button onClick={recapturePresentFinancialSituation}>
-          Change your current financial situation
-        </button>
         <SimulationPlayground />
       </div>
     );

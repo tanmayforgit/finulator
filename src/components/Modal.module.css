@@ -1,0 +1,10 @@
+.close_button {
+  position: absolute;
+  right: 0;
+  color: red;
+  margin-right: 15px;
+}
+
+.modal_div {
+  margin: 15px;
+}
