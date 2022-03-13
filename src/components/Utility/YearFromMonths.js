@@ -7,12 +7,17 @@ const YearFromMonths = (props) => {
     case 0:
       return <div>{month} Months</div>;
     case 1:
-      return <div> 1 Year, {month} Months</div>;
+      return (
+        <div>
+          {" "}
+          {noOfMonths} Months (1 Year, {month} Months)
+        </div>
+      );
     default:
       return (
         <div>
           {" "}
-          {year} Years, {month} Months{" "}
+          {noOfMonths} Months ({year} Years, {month} Months)
         </div>
       );
   }
