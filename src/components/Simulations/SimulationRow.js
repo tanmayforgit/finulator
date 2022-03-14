@@ -3,6 +3,7 @@ import AgeAfterMonths from "components/Utility/AgeAfterMonths";
 import Modal from "react-modal";
 import { Fragment, useState } from "react";
 import classes from "components/Table.module.css";
+import SimulationRowComment from './SimulationRowComment';
 
 const SimulationRow = (props) => {
   console.log("called");
@@ -31,6 +32,8 @@ const SimulationRow = (props) => {
     }
   };
 
+  const comments = props.finSituation.comments.map((comment) => (<SimulationRowComment comment={comment}/>))
+
   return (
     <Fragment>
       <tr>
@@ -46,7 +49,7 @@ const SimulationRow = (props) => {
         <td>
           <button onClick={viewDetailsHandler}> View Details</button>
         </td>
-        <td> Yet to be implemented </td>
+        <td> {comments} </td>
       </tr>
       <Modal isOpen={detailsModalOpen}>
         <button onClick={closeModal}>Close</button>

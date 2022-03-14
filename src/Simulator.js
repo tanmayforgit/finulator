@@ -12,6 +12,7 @@ class Simulator {
     this.yearlyInflationRate = yearlyInflationRate;
     this.monthlyInflationRate =
       this.#getMonthlyInflationRate(yearlyInflationRate);
+    this.currentSimulationComments = [];
   }
 
   simulateForMonths(noOfMonths) {
@@ -31,7 +32,9 @@ class Simulator {
     console.log("ledgers", ledgers);
     const simulatedFinSituation = this.#constructFinSituation(ledgers);
 
-    console.log("simulated situation", simulatedFinSituation);
+    simulatedFinSituation.comments = this.currentSimulationComments;
+
+    console.log("simulated situation for month " + this.monthToSimulate, simulatedFinSituation);
     this.monthlyLedgers.set(this.monthToSimulate, ledgers);
     this.monthlyFinancialSituations.set(
       this.monthToSimulate,
@@ -40,6 +43,7 @@ class Simulator {
     this.currentMonth = this.currentMonth + 1;
     this.monthToSimulate = this.monthToSimulate + 1;
     this.currentFinSituation = simulatedFinSituation;
+    this.currentSimulationComments = [];
 
     console.log("this after a round", this);
 
@@ -62,12 +66,31 @@ class Simulator {
   #simulateJobLoss(jobLossEvent) {
     const implementationDetails = jobLossEvent.implementationDetails;
     const monthToSimulate = this.monthToSimulate;
-    if (monthToSimulate >= implementationDetails.fromMonth && monthToSimulate <= implementationDetails.toMonth) {
+    if (
+      monthToSimulate >= implementationDetails.fromMonth &&
+      monthToSimulate <= implementationDetails.toMonth
+    ) {
       this.currentFinSituation.monthlyIncome = 0;
     }
 
-    if (monthToSimulate === implementationDetails.toMonth + 1){ // Job loss event just ended
-      this.currentFinSituation.monthlyIncome = implementationDetails.postJlMonthlyIncome;
+    if (monthToSimulate === implementationDetails.toMonth + 1) {
+      // Job loss event just ended
+      this.currentFinSituation.monthlyIncome =
+        implementationDetails.postJlMonthlyIncome;
+    }
+
+    if (monthToSimulate == implementationDetails.fromMonth) {
+      this.currentSimulationComments = this.currentSimulationComments.concat({
+        type: "warn",
+        text: "You lost your job",
+      });
+    }
+
+    if (monthToSimulate == implementationDetails.toMonth) {
+      this.currentSimulationComments = this.currentSimulationComments.concat({
+        type: "good",
+        text: "You got another job starting next month!",
+      });
     }
   }
 
@@ -76,6 +99,11 @@ class Simulator {
     console.log("current fin situation", this.currentFinSituation);
     const currentFinSituation = { ...this.currentFinSituation };
     return ledgers.reduce(this.#addLedgerToFinSituation, currentFinSituation);
+  }
+
+  #addCommnetToCurrentSimulation(comment) {
+    this.currentSimulationComments =
+      this.currentSimulationComments.concat(comment);
   }
 
   #addLedgerToFinSituation(finSituation, ledger) {

@@ -1,0 +1,15 @@
+.info_text {
+  color: black;
+}
+
+.warn_text {
+  color: orange;
+}
+
+.critical_text {
+  color: red;
+}
+
+.good_text {
+  color: green;
+}
