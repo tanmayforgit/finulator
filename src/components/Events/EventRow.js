@@ -1,5 +1,6 @@
 import JobLossEventDetails from "./JobLossEventDetails";
 import { useDispatch } from "react-redux";
+import KidEventDetails from "./KidEventDetails";
 
 const EventRow = (props) => {
   const finEvent = props.finEvent;
@@ -9,6 +10,8 @@ const EventRow = (props) => {
     switch (finEvent.name) {
       case "job_loss":
         return <JobLossEventDetails finEvent={finEvent} />;
+      case "kid":
+        return <KidEventDetails finEvent={finEvent}/>
     }
   };
 

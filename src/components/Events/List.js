@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import modalClasses from "components/Modal.module.css";
 import { useState } from "react";
 import JobLoss from "./JobLoss";
+import Kid from "./Kid";
 
 // import { FaPlus } from "react-icons/fa";
 const List = () => {
@@ -39,6 +40,19 @@ const List = () => {
               </button>
             </td>
           </tr>
+          <tr>
+            <td>
+              Kid
+            </td>
+            <td>
+              Allows you to add expenses per month level across different age brackets. You should not count these expenses twice i.e. once here and once as monthly expenses
+            </td>
+            <td>
+              <button onClick={openAddEventModal.bind(this, "kid")}>
+                Add
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
       <Modal isOpen={eventBeingAdded}>
@@ -47,6 +61,7 @@ const List = () => {
             X
           </button>
           {eventBeingAdded === "job_loss" && <JobLoss closeModalCallback={closeModal}/>}
+          {eventBeingAdded === "kid" && <Kid closeModalCallback={closeModal}/>}
         </div>
       </Modal>
     </Fragment>

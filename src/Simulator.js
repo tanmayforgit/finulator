@@ -1,3 +1,4 @@
+import KidSimulator from "simulators/KidSimulator";
 class Simulator {
   constructor(userDetails, initialFinSituation, events, yearlyInflationRate) {
     this.userDetails = userDetails;
@@ -13,6 +14,7 @@ class Simulator {
     this.monthlyInflationRate =
       this.#getMonthlyInflationRate(yearlyInflationRate);
     this.currentSimulationComments = [];
+    this.currentSimulationLedgers = [];
   }
 
   simulateForMonths(noOfMonths) {
@@ -27,15 +29,16 @@ class Simulator {
 
   simulateOneMonth() {
     this.#beforeSimulationProcedure();
-    const ledgers = this.#getLedgers();
-
-    console.log("ledgers", ledgers);
-    const simulatedFinSituation = this.#constructFinSituation(ledgers);
-
-    simulatedFinSituation.comments = this.currentSimulationComments;
-
-    console.log("simulated situation for month " + this.monthToSimulate, simulatedFinSituation);
-    this.monthlyLedgers.set(this.monthToSimulate, ledgers);
+    this.#simulateEvents();
+    const simulatedFinSituation = this.#constructFinSituation();
+    console.log(
+      "simulated situation for month " + this.monthToSimulate,
+      simulatedFinSituation
+    );
+    this.monthlyLedgers.set(
+      this.monthToSimulate,
+      this.currentSimulationLedgers
+    );
     this.monthlyFinancialSituations.set(
       this.monthToSimulate,
       simulatedFinSituation
@@ -44,6 +47,7 @@ class Simulator {
     this.monthToSimulate = this.monthToSimulate + 1;
     this.currentFinSituation = simulatedFinSituation;
     this.currentSimulationComments = [];
+    this.currentSimulationLedgers = [];
 
     console.log("this after a round", this);
 
@@ -51,6 +55,46 @@ class Simulator {
       return false;
     } else {
       return true;
+    }
+  }
+
+  #simulateEvents() {
+    this.events.map((finEvent) => {
+      const { ledgers, comments } = this.#simulateEvent(finEvent);
+
+      ledgers.forEach(
+        (ledger) =>
+          (this.currentSimulationLedgers =
+            this.currentSimulationLedgers.concat(ledger))
+      );
+
+      comments.forEach(
+        (comment) =>
+          (this.currentSimulationComments =
+            this.currentSimulationComments.concat(comment))
+      );
+    });
+  }
+
+  #simulateEvent(finEvent) {
+    switch (finEvent.name) {
+      case "kid":
+        const kidSimulator = new KidSimulator(
+          this.currentFinSituation,
+          finEvent,
+          this.monthlyInflationRate
+        );
+        return kidSimulator.simulate(this.monthToSimulate);
+      case "monthly_expense":
+        return { ledgers: this.#getMonthlyExpenseLedgers(), comments: [] };
+      case "yearly_expense":
+        return { ledgers: this.#getYearlyExpenseLedgers(), comments: [] };
+      case "monthly_income":
+        return { ledgers: this.#getMonthlyIncomeLedgers(), comments: [] };
+      case "yearly_income":
+        return { ledgers: this.#getYearlyIncomeLedgers(), comments: [] };
+      default:
+        return { ledgers: [], comments: [] };
     }
   }
 
@@ -94,17 +138,25 @@ class Simulator {
     }
   }
 
-  #constructFinSituation(ledgers) {
+  #constructFinSituation() {
     console.log("current month", this.currentMonth);
     console.log("current fin situation", this.currentFinSituation);
-    const currentFinSituation = { ...this.currentFinSituation };
-    return ledgers.reduce(this.#addLedgerToFinSituation, currentFinSituation);
+    let constructedFinSituation = { ...this.currentFinSituation };
+
+    constructedFinSituation = this.currentSimulationLedgers.reduce(
+      this.#addLedgerToFinSituation,
+      constructedFinSituation
+    );
+
+    constructedFinSituation.comments = this.currentSimulationComments;
+
+    return constructedFinSituation;
   }
 
-  #addCommnetToCurrentSimulation(comment) {
-    this.currentSimulationComments =
-      this.currentSimulationComments.concat(comment);
-  }
+  // #addCommnetToCurrentSimulation(comment) {
+  //   this.currentSimulationComments =
+  //     this.currentSimulationComments.concat(comment);
+  // }
 
   #addLedgerToFinSituation(finSituation, ledger) {
     console.log(finSituation);
@@ -121,32 +173,32 @@ class Simulator {
     }
   }
 
-  #getLastSimulatedFinancialSituation() {
-    return this.monthlyFinancialSituations[this.currentMonth];
-  }
+  // #getLastSimulatedFinancialSituation() {
+  //   return this.monthlyFinancialSituations[this.currentMonth];
+  // }
 
-  #getLedgers() {
-    return this.events.reduce(this.#addEventLedgers.bind(this), []);
-  }
+  // #getDefaultEventLedgers() {
+  //   return this.events.reduce(this.#addEventLedgers.bind(this), []);
+  // }
 
-  #addEventLedgers(other_event_ledgers, finEvent) {
-    return other_event_ledgers.concat(this.#getEventLedgers(finEvent));
-  }
+  // #addEventLedgers(other_event_ledgers, finEvent) {
+  //   return other_event_ledgers.concat(this.#getEventLedgers(finEvent));
+  // }
 
-  #getEventLedgers(finEvent) {
-    switch (finEvent.name) {
-      case "monthly_expense":
-        return this.#getMonthlyExpenseLedgers();
-      case "yearly_expense":
-        return this.#getYearlyExpenseLedgers();
-      case "monthly_income":
-        return this.#getMonthlyIncomeLedgers();
-      case "yearly_income":
-        return this.#getYearlyIncomeLedgers();
-      case "job_loss":
-        return [];
-    }
-  }
+  // #getEventLedgers(finEvent) {
+  //   switch (finEvent.name) {
+  //     case "monthly_expense":
+  //       return this.#getMonthlyExpenseLedgers();
+  //     case "yearly_expense":
+  //       return this.#getYearlyExpenseLedgers();
+  //     case "monthly_income":
+  //       return this.#getMonthlyIncomeLedgers();
+  //     case "yearly_income":
+  //       return this.#getYearlyIncomeLedgers();
+  //     case "job_loss":
+  //       return [];
+  //   }
+  // }
 
   #getMonthlyExpenseLedgers() {
     const initMontlyExpense = this.initialFinSituation.monthlyExpense;
