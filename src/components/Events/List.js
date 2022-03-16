@@ -7,7 +7,7 @@ import JobLoss from "./JobLoss";
 import Kid from "./Kid";
 import YearlyIncrement from "./YearlyIncrement";
 import PreExistingInvestment from "./PreExistingInvestment";
-
+import Sip from "./Sip";
 // import { FaPlus } from "react-icons/fa";
 const List = () => {
   const openAddEventModal = (finEventName, browserEvent) => {
@@ -81,6 +81,19 @@ const List = () => {
               </button>
             </td>
           </tr>
+          <tr>
+            <td>SIP - Mutual Fund</td>
+            <td>
+              Allows you to add monthly SIP
+            </td>
+            <td>
+              <button
+                onClick={openAddEventModal.bind(this, "sip")}
+              >
+                Add
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
       <Modal isOpen={eventBeingAdded}>
@@ -97,6 +110,9 @@ const List = () => {
           )}
           {eventBeingAdded === "pre_existing_investment" && (
             <PreExistingInvestment closeModalCallback={closeModal} />
+          )}
+          {eventBeingAdded === "sip" && (
+            <Sip closeModalCallback={closeModal} />
           )}
         </div>
       </Modal>

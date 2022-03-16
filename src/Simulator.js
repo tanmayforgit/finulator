@@ -1,6 +1,7 @@
 import KidSimulator from "simulators/KidSimulator";
 import PreExistingInvestmentSimulator from "simulators/PreExistingInvestmentSimulator";
 import YearlyIncrementSimulator from "simulators/YearlyIncrementSimulator";
+import SipSimulator from "simulators/SipSimulator";
 class Simulator {
   constructor(userDetails, initialFinSituation, events, yearlyInflationRate) {
     this.userDetails = userDetails;
@@ -31,7 +32,10 @@ class Simulator {
   }
 
   simulateOneMonth() {
+    console.log("calling before simulation procedure", this.monthToSimulate);
     this.#beforeSimulationProcedure();
+    console.log("finished calling before simulation procedure", this.monthToSimulate);
+
     let simulatedFinSituation = this.#simulateEvents();
     console.log(
       "simulated situation for month " + this.monthToSimulate,
@@ -108,17 +112,38 @@ class Simulator {
             this.monthlyInflationRate
           );
         return preExistingInvestmentSimulator.simulate(this.monthToSimulate);
+      case "sip":
+        const sipSimulator = new SipSimulator(
+          this.currentFinSituation,
+          finEvent,
+          this.monthlyInflationRate
+        );
+        return sipSimulator.simulate(this.monthToSimulate);
       default:
         return { ledgers: [], comments: [] };
     }
   }
 
   #beforeSimulationProcedure() {
+    console.log("before simulation procedure for", this.monthToSimulate);
     this.events.forEach((finEvent) => {
       switch (finEvent.name) {
         case "job_loss":
           // TODO: Create simulator for job loss event and move logic over there
           this.#simulateJobLoss(finEvent);
+        case "sip":
+          console.log("before simulation processing for sip");
+          // TODO: There is scope to refactor these contracts...
+          const sipSimulator = new SipSimulator(
+            this.currentFinSituation,
+            finEvent,
+            this.monthlyInflationRate
+          );
+          const { finSituation, comments } =
+            sipSimulator.beforeSimulationCallback(this.monthToSimulate);
+          this.currentFinSituation = finSituation;
+          console.log("sip finsituation", finSituation);
+          this.#addCommentsToCurrentSituation(comments);
       }
     });
   }
@@ -230,10 +255,12 @@ class Simulator {
         finSituation.bankBalance -= Math.round(ledger.amount);
         return finSituation;
       case "investment_multiplier":
-        finSituation.investments.get(ledger.investment_id).unitPrice *= ledger.multiplier;
+        finSituation.investments.get(ledger.investment_id).unitPrice *=
+          ledger.multiplier;
         return finSituation;
       case "investment_credit":
-        finSituation.investments.get(ledger.investment_id).unitsHeld += ledger.units
+        finSituation.investments.get(ledger.investment_id).unitsHeld +=
+          ledger.amount;
         return finSituation;
     }
   }
@@ -373,13 +400,12 @@ class Simulator {
     );
 
     console.log("preExistingInvestmentEvents", preExistingInvestmentEvents);
-    const investmentSituation = new Map;
-    preExistingInvestmentEvents.forEach(
-      (finEvent) =>
-        (investmentSituation.set(finEvent.id, {
-          unitsHeld: 100,
-          unitPrice: finEvent.implementationDetails.amount / 100,
-        }))
+    const investmentSituation = new Map();
+    preExistingInvestmentEvents.forEach((finEvent) =>
+      investmentSituation.set(finEvent.id, {
+        unitsHeld: 100,
+        unitPrice: finEvent.implementationDetails.amount / 100,
+      })
     );
 
     this.currentFinSituation.investments = investmentSituation;
@@ -388,8 +414,8 @@ class Simulator {
   #calculateAssetValue(finSituation) {
     console.log("calculating asset value for situation", finSituation);
 
-    let investments = finSituation.investments
-    let assetValue = 0
+    let investments = finSituation.investments;
+    let assetValue = 0;
 
     for (const [investment_id, investment] of investments.entries()) {
       assetValue = assetValue + investment.unitsHeld * investment.unitPrice;

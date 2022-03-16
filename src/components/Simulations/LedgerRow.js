@@ -8,6 +8,8 @@ const LedgerRow = (props) => {
         return "Credit (to bank balance)";
       case "investment_multiplier":
         return "Asset Growth";
+      case "investment_credit":
+        return "Asset purchase"
     }
   };
 
