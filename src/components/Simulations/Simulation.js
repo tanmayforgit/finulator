@@ -34,9 +34,10 @@ const Simulation = (props) => {
     <Fragment>
       <table className={classes.table}>
         <thead>
-          <th> Time Into Simulation</th>
-          <th> Your Age (approx) </th>
+          <th>Time Into Simulation</th>
+          <th>Your Age (approx) </th>
           <th>Bank Balance</th>
+          <th>Assets</th>
           <th>Actions</th>
           <th>Comments</th>
         </thead>

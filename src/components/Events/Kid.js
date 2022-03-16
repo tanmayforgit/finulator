@@ -38,7 +38,6 @@ const Kid = (props) => {
     );
 
     const kidName = kidNameRef.current.value;
-
     if (
       isNaN(deliveryExpense) ||
       isNaN(oneYearExpense) ||
@@ -66,6 +65,7 @@ const Kid = (props) => {
       );
     }
 
+    console.log("form errors", formErrors);
     if (formErrors.length === 0) {
       const kidEvent = {
         label: "Kid",

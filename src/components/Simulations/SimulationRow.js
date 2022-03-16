@@ -3,7 +3,8 @@ import AgeAfterMonths from "components/Utility/AgeAfterMonths";
 import Modal from "react-modal";
 import { Fragment, useState } from "react";
 import classes from "components/Table.module.css";
-import SimulationRowComment from './SimulationRowComment';
+import SimulationRowComment from "./SimulationRowComment";
+import LedgerRow from "./LedgerRow";
 
 const SimulationRow = (props) => {
   console.log("called");
@@ -14,7 +15,7 @@ const SimulationRow = (props) => {
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
 
   const viewDetailsHandler = () => {
-    console.log('ledgers', ledgers);
+    console.log("ledgers", ledgers);
     setDetailsModalOpen(true);
   };
 
@@ -23,16 +24,9 @@ const SimulationRow = (props) => {
     setDetailsModalOpen(false);
   };
 
-  const displayLedgerType = (type) => {
-    switch (type) {
-      case "bank_balance_debit":
-        return "Debit (from bank balance)";
-      case "bank_balance_credit":
-        return "Credit (to bank balance)";
-    }
-  };
-
-  const comments = props.finSituation.comments.map((comment) => (<SimulationRowComment comment={comment}/>))
+  const comments = props.finSituation.comments.map((comment) => (
+    <SimulationRowComment comment={comment} />
+  ));
 
   return (
     <Fragment>
@@ -45,7 +39,8 @@ const SimulationRow = (props) => {
           {" "}
           <AgeAfterMonths age={userDetails.age} months={month} />{" "}
         </td>
-        <td>{finSituation.bankBalance}</td>
+        <td>{Math.round(finSituation.bankBalance)}</td>
+        <td>{Math.round(finSituation.assetValue)}</td>
         <td>
           <button onClick={viewDetailsHandler}> View Details</button>
         </td>
@@ -59,11 +54,7 @@ const SimulationRow = (props) => {
           <th>Description</th>
           <tbody>
             {ledgers.map((ledger, i) => (
-              <tr>
-                <td>{displayLedgerType(ledger.type)}</td>
-                <td>{ledger.amount}</td>
-                <td>{ledger.description}</td>
-              </tr>
+              <LedgerRow ledger={ledger} />
             ))}
           </tbody>
         </table>

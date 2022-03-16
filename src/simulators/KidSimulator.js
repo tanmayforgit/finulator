@@ -157,7 +157,7 @@ class KidSimulator {
   }
 
   beforeSimulationCallback(simulationMonthNumber) {
-    return this.finSituation;
+    return {finSituation: this.finSituation, comments: []};
   }
 
   #getBelowOneYearMonthlyExpense(simulationMonthNumber) {

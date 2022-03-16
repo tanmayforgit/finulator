@@ -1,6 +1,6 @@
 import KidSimulator from "simulators/KidSimulator";
+import PreExistingInvestmentSimulator from "simulators/PreExistingInvestmentSimulator";
 import YearlyIncrementSimulator from "simulators/YearlyIncrementSimulator";
-import yearlyIncrementSimulator from "simulators/YearlyIncrementSimulator";
 class Simulator {
   constructor(userDetails, initialFinSituation, events, yearlyInflationRate) {
     this.userDetails = userDetails;
@@ -17,6 +17,7 @@ class Simulator {
       this.#getMonthlyInflationRate(yearlyInflationRate);
     this.currentSimulationComments = [];
     this.currentSimulationLedgers = [];
+    this.#setupPreExistingInvestments();
   }
 
   simulateForMonths(noOfMonths) {
@@ -36,6 +37,9 @@ class Simulator {
       "simulated situation for month " + this.monthToSimulate,
       simulatedFinSituation
     );
+
+    const assetsValue = this.#calculateAssetValue(simulatedFinSituation);
+    simulatedFinSituation.assetValue = assetsValue;
 
     this.currentFinSituation = simulatedFinSituation;
 
@@ -96,6 +100,14 @@ class Simulator {
         return { ledgers: this.#getMonthlyIncomeLedgers(), comments: [] };
       case "yearly_income":
         return { ledgers: this.#getYearlyIncomeLedgers(), comments: [] };
+      case "pre_existing_investment":
+        const preExistingInvestmentSimulator =
+          new PreExistingInvestmentSimulator(
+            this.currentFinSituation,
+            finEvent,
+            this.monthlyInflationRate
+          );
+        return preExistingInvestmentSimulator.simulate(this.monthToSimulate);
       default:
         return { ledgers: [], comments: [] };
     }
@@ -212,12 +224,16 @@ class Simulator {
     console.log(ledger);
     switch (ledger.type) {
       case "bank_balance_credit":
-        finSituation.bankBalance =
-          finSituation.bankBalance + Math.round(ledger.amount);
+        finSituation.bankBalance += Math.round(ledger.amount);
         return finSituation;
       case "bank_balance_debit":
-        finSituation.bankBalance =
-          finSituation.bankBalance - Math.round(ledger.amount);
+        finSituation.bankBalance -= Math.round(ledger.amount);
+        return finSituation;
+      case "investment_multiplier":
+        finSituation.investments.get(ledger.investment_id).unitPrice *= ledger.multiplier;
+        return finSituation;
+      case "investment_credit":
+        finSituation.investments.get(ledger.investment_id).unitsHeld += ledger.units
         return finSituation;
     }
   }
@@ -349,6 +365,37 @@ class Simulator {
     // (A/100 + 1)^1/12 - 1
 
     return Math.pow(yearly_inflation_rate / 100 + 1, 1 / 12) - 1;
+  }
+
+  #setupPreExistingInvestments() {
+    const preExistingInvestmentEvents = this.events.filter(
+      (finEvent) => finEvent.name === "pre_existing_investment"
+    );
+
+    console.log("preExistingInvestmentEvents", preExistingInvestmentEvents);
+    const investmentSituation = new Map;
+    preExistingInvestmentEvents.forEach(
+      (finEvent) =>
+        (investmentSituation.set(finEvent.id, {
+          unitsHeld: 100,
+          unitPrice: finEvent.implementationDetails.amount / 100,
+        }))
+    );
+
+    this.currentFinSituation.investments = investmentSituation;
+  }
+
+  #calculateAssetValue(finSituation) {
+    console.log("calculating asset value for situation", finSituation);
+
+    let investments = finSituation.investments
+    let assetValue = 0
+
+    for (const [investment_id, investment] of investments.entries()) {
+      assetValue = assetValue + investment.unitsHeld * investment.unitPrice;
+    }
+
+    return assetValue;
   }
 }
 export default Simulator;
