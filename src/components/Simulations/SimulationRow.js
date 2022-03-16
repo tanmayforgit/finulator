@@ -7,7 +7,7 @@ import SimulationRowComment from "./SimulationRowComment";
 import LedgerRow from "./LedgerRow";
 
 const SimulationRow = (props) => {
-  console.log("called");
+  console.log("called with props", props.month);
   const finSituation = props.finSituation;
   const ledgers = props.ledgers;
   const month = props.month;
@@ -44,7 +44,7 @@ const SimulationRow = (props) => {
         <td>
           <button onClick={viewDetailsHandler}> View Details</button>
         </td>
-        <td> {comments} </td>
+        <td> <ul>{comments}</ul> </td>
       </tr>
       <Modal isOpen={detailsModalOpen}>
         <button onClick={closeModal}>Close</button>

@@ -43,6 +43,7 @@ const Simulation = (props) => {
         </thead>
         <tbody>
           {simulationRows.map(([month, finSituation], i) => (
+            
             <SimulationRow
               finSituation={finSituation}
               month={month}

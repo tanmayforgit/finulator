@@ -8,6 +8,7 @@ import Kid from "./Kid";
 import YearlyIncrement from "./YearlyIncrement";
 import PreExistingInvestment from "./PreExistingInvestment";
 import Sip from "./Sip";
+import MarketCrash from "./MarketCrash";
 // import { FaPlus } from "react-icons/fa";
 const List = () => {
   const openAddEventModal = (finEventName, browserEvent) => {
@@ -94,6 +95,19 @@ const List = () => {
               </button>
             </td>
           </tr>
+          <tr>
+            <td>Market crash</td>
+            <td>
+              Crashes all your SIPs and pre existing investments. You get to decide crash percentage
+            </td>
+            <td>
+              <button
+                onClick={openAddEventModal.bind(this, "market_crash")}
+              >
+                Add
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
       <Modal isOpen={eventBeingAdded}>
@@ -113,6 +127,9 @@ const List = () => {
           )}
           {eventBeingAdded === "sip" && (
             <Sip closeModalCallback={closeModal} />
+          )}
+          {eventBeingAdded === "market_crash" && (
+            <MarketCrash closeModalCallback={closeModal} />
           )}
         </div>
       </Modal>

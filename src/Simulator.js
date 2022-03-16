@@ -2,6 +2,7 @@ import KidSimulator from "simulators/KidSimulator";
 import PreExistingInvestmentSimulator from "simulators/PreExistingInvestmentSimulator";
 import YearlyIncrementSimulator from "simulators/YearlyIncrementSimulator";
 import SipSimulator from "simulators/SipSimulator";
+import MarketCrashSimulator from "simulators/MarketCrashSimulator";
 class Simulator {
   constructor(userDetails, initialFinSituation, events, yearlyInflationRate) {
     this.userDetails = userDetails;
@@ -34,7 +35,10 @@ class Simulator {
   simulateOneMonth() {
     console.log("calling before simulation procedure", this.monthToSimulate);
     this.#beforeSimulationProcedure();
-    console.log("finished calling before simulation procedure", this.monthToSimulate);
+    console.log(
+      "finished calling before simulation procedure",
+      this.monthToSimulate
+    );
 
     let simulatedFinSituation = this.#simulateEvents();
     console.log(
@@ -119,6 +123,13 @@ class Simulator {
           this.monthlyInflationRate
         );
         return sipSimulator.simulate(this.monthToSimulate);
+      case "market_crash":
+        const marketCrashSimulator = new MarketCrashSimulator(
+          this.currentFinSituation,
+          finEvent,
+          this.monthlyInflationRate
+        );
+        return marketCrashSimulator.simulate(this.monthToSimulate);
       default:
         return { ledgers: [], comments: [] };
     }
@@ -144,6 +155,28 @@ class Simulator {
           this.currentFinSituation = finSituation;
           console.log("sip finsituation", finSituation);
           this.#addCommentsToCurrentSituation(comments);
+        // case "market_crash":
+        //   const crashMonth = finEvent.implementationDetails.crashMonth;
+        //   if (this.monthToSimulate === crashMonth) {
+        //     const crashPercentage =
+        //       finEvent.implementationDetails.crashPercentage;
+        //     const investmentEvents = this.events.filter(
+        //       (finEvent) =>
+        //         finEvent.name == "sip" ||
+        //         finEvent.name == "pre_existing_investment"
+        //     );
+        //     investmentEvents.forEach((investmentEvent) => {
+        //       let existingCrashes =
+        //         investmentEvent.implementationDetails.crashes;
+        //       if (existingCrashes) {
+        //         existingCrashes[crashMonth] = crashPercentage;
+        //       } else {
+        //         let crashToAdd = {};
+        //         crashToAdd[crashMonth] = crashPercentage;
+        //         investmentEvent.implementationDetails.crashes = crashToAdd;
+        //       }
+        //     });
+        //   }
       }
     });
   }
@@ -405,6 +438,7 @@ class Simulator {
       investmentSituation.set(finEvent.id, {
         unitsHeld: 100,
         unitPrice: finEvent.implementationDetails.amount / 100,
+        name: finEvent.implementationDetails.name
       })
     );
 

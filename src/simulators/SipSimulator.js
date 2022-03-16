@@ -89,6 +89,7 @@ class SipSimulator extends Base {
       this.finSituation.investments.set(this.investment_id, {
         unitsHeld: 0, // They will automatically become 100 during first simulation
         unitPrice: this.monthlyAmount / 100,
+        name: this.name
       });
 
       return {
