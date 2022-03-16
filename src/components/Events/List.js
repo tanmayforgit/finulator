@@ -5,6 +5,7 @@ import modalClasses from "components/Modal.module.css";
 import { useState } from "react";
 import JobLoss from "./JobLoss";
 import Kid from "./Kid";
+import YearlyIncrement from "./YearlyIncrement";
 
 // import { FaPlus } from "react-icons/fa";
 const List = () => {
@@ -53,6 +54,19 @@ const List = () => {
               </button>
             </td>
           </tr>
+          <tr>
+            <td>
+              Yearly Increment
+            </td>
+            <td>
+              Allows you to set how much your income will grow year on year basis.
+            </td>
+            <td>
+              <button onClick={openAddEventModal.bind(this, "yearly_increment")}>
+                Add
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
       <Modal isOpen={eventBeingAdded}>
@@ -62,6 +76,7 @@ const List = () => {
           </button>
           {eventBeingAdded === "job_loss" && <JobLoss closeModalCallback={closeModal}/>}
           {eventBeingAdded === "kid" && <Kid closeModalCallback={closeModal}/>}
+          {eventBeingAdded === "yearly_increment" && <YearlyIncrement closeModalCallback={closeModal}/>}
         </div>
       </Modal>
     </Fragment>

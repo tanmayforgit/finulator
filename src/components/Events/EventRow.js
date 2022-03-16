@@ -1,6 +1,7 @@
 import JobLossEventDetails from "./JobLossEventDetails";
 import { useDispatch } from "react-redux";
 import KidEventDetails from "./KidEventDetails";
+import YearlyIncrementEventDetails from "./YearlyIncrementEventDetails";
 
 const EventRow = (props) => {
   const finEvent = props.finEvent;
@@ -11,12 +12,14 @@ const EventRow = (props) => {
       case "job_loss":
         return <JobLossEventDetails finEvent={finEvent} />;
       case "kid":
-        return <KidEventDetails finEvent={finEvent}/>
+        return <KidEventDetails finEvent={finEvent} />;
+      case "yearly_increment":
+        return <YearlyIncrementEventDetails finEvent={finEvent} />;
     }
   };
 
   const removeEvent = () => {
-    console.log('removing', finEvent.id);
+    console.log("removing", finEvent.id);
     dispatchRemoveEvent({
       type: "remove_event",
       event_id: finEvent.id,

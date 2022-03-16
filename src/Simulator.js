@@ -1,4 +1,6 @@
 import KidSimulator from "simulators/KidSimulator";
+import YearlyIncrementSimulator from "simulators/YearlyIncrementSimulator";
+import yearlyIncrementSimulator from "simulators/YearlyIncrementSimulator";
 class Simulator {
   constructor(userDetails, initialFinSituation, events, yearlyInflationRate) {
     this.userDetails = userDetails;
@@ -29,29 +31,19 @@ class Simulator {
 
   simulateOneMonth() {
     this.#beforeSimulationProcedure();
-    this.#simulateEvents();
-    const simulatedFinSituation = this.#constructFinSituation();
+    let simulatedFinSituation = this.#simulateEvents();
     console.log(
       "simulated situation for month " + this.monthToSimulate,
       simulatedFinSituation
     );
-    this.monthlyLedgers.set(
-      this.monthToSimulate,
-      this.currentSimulationLedgers
-    );
-    this.monthlyFinancialSituations.set(
-      this.monthToSimulate,
-      simulatedFinSituation
-    );
-    this.currentMonth = this.currentMonth + 1;
-    this.monthToSimulate = this.monthToSimulate + 1;
+
     this.currentFinSituation = simulatedFinSituation;
-    this.currentSimulationComments = [];
-    this.currentSimulationLedgers = [];
+
+    this.#afterSimulationProcedure();
 
     console.log("this after a round", this);
 
-    if (simulatedFinSituation.bankBalance < 0) {
+    if (this.currentFinSituation.bankBalance < 0) {
       return false;
     } else {
       return true;
@@ -74,6 +66,17 @@ class Simulator {
             this.currentSimulationComments.concat(comment))
       );
     });
+
+    let constructedFinSituation = { ...this.currentFinSituation };
+
+    constructedFinSituation = this.currentSimulationLedgers.reduce(
+      this.#addLedgerToFinSituation,
+      constructedFinSituation
+    );
+
+    constructedFinSituation.comments = this.currentSimulationComments;
+
+    return constructedFinSituation;
   }
 
   #simulateEvent(finEvent) {
@@ -102,9 +105,55 @@ class Simulator {
     this.events.forEach((finEvent) => {
       switch (finEvent.name) {
         case "job_loss":
+          // TODO: Create simulator for job loss event and move logic over there
           this.#simulateJobLoss(finEvent);
       }
     });
+  }
+
+  #afterSimulationProcedure() {
+    this.events.forEach((finEvent) => {
+      switch (finEvent.name) {
+        case "yearly_increment":
+          const yearlyIncrementSimulator = new YearlyIncrementSimulator(
+            this.currentFinSituation,
+            finEvent,
+            this.monthlyInflationRate
+          );
+
+          let { finSituation, comments } =
+            yearlyIncrementSimulator.afterSimulationCallback(
+              this.monthToSimulate
+            );
+          console.log("returned fituation", finSituation);
+          this.currentFinSituation = finSituation;
+          this.#addCommentsToCurrentSituation(comments);
+      }
+    });
+
+    this.currentFinSituation.comments = this.currentSimulationComments;
+
+    this.monthlyLedgers.set(
+      this.monthToSimulate,
+      this.currentSimulationLedgers
+    );
+
+    this.monthlyFinancialSituations.set(this.monthToSimulate, {
+      ...this.currentFinSituation,
+    });
+
+    this.currentMonth = this.currentMonth + 1;
+    this.monthToSimulate = this.monthToSimulate + 1;
+    this.currentSimulationComments = [];
+    this.currentSimulationLedgers = [];
+  }
+
+  #addCommentsToCurrentSituation(comments) {
+    comments.forEach(
+      (comment) =>
+        (this.currentSimulationComments =
+          this.currentSimulationComments.concat(comment))
+    );
   }
 
   #simulateJobLoss(jobLossEvent) {
