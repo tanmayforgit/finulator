@@ -3,6 +3,7 @@ import PreExistingInvestmentSimulator from "simulators/PreExistingInvestmentSimu
 import YearlyIncrementSimulator from "simulators/YearlyIncrementSimulator";
 import SipSimulator from "simulators/SipSimulator";
 import MarketCrashSimulator from "simulators/MarketCrashSimulator";
+import LoanSimulator from "simulators/LoanSimulator";
 class Simulator {
   constructor(userDetails, initialFinSituation, events, yearlyInflationRate) {
     this.userDetails = userDetails;
@@ -20,6 +21,7 @@ class Simulator {
     this.currentSimulationComments = [];
     this.currentSimulationLedgers = [];
     this.#setupPreExistingInvestments();
+    this.#setupPreExistingLiabilities();
   }
 
   simulateForMonths(noOfMonths) {
@@ -48,6 +50,10 @@ class Simulator {
 
     const assetsValue = this.#calculateAssetValue(simulatedFinSituation);
     simulatedFinSituation.assetValue = assetsValue;
+
+    simulatedFinSituation.totalLiabilities = this.#calculateLiabilities(
+      simulatedFinSituation
+    );
 
     this.currentFinSituation = simulatedFinSituation;
 
@@ -130,8 +136,34 @@ class Simulator {
           this.monthlyInflationRate
         );
         return marketCrashSimulator.simulate(this.monthToSimulate);
+      case "loan":
+        const loanSimulator = new LoanSimulator(
+          this.currentFinSituation,
+          finEvent,
+          this.monthlyInflationRate
+        );
+        return loanSimulator.simulate(this.monthToSimulate);
       default:
         return { ledgers: [], comments: [] };
+    }
+  }
+
+  #getSimulator(finEvent) {
+    switch (finEvent.name) {
+      case "sip":
+        return new SipSimulator(
+          this.currentFinSituation,
+          finEvent,
+          this.monthlyInflationRate
+        );
+      case "loan":
+        return new LoanSimulator(
+          this.currentFinSituation,
+          finEvent,
+          this.monthlyInflationRate
+        );
+      default:
+        return undefined;
     }
   }
 
@@ -141,42 +173,46 @@ class Simulator {
       switch (finEvent.name) {
         case "job_loss":
           // TODO: Create simulator for job loss event and move logic over there
+          // We don't need to have this switch statement at all.
           this.#simulateJobLoss(finEvent);
-        case "sip":
-          console.log("before simulation processing for sip");
-          // TODO: There is scope to refactor these contracts...
-          const sipSimulator = new SipSimulator(
-            this.currentFinSituation,
-            finEvent,
-            this.monthlyInflationRate
-          );
-          const { finSituation, comments } =
-            sipSimulator.beforeSimulationCallback(this.monthToSimulate);
-          this.currentFinSituation = finSituation;
-          console.log("sip finsituation", finSituation);
-          this.#addCommentsToCurrentSituation(comments);
-        // case "market_crash":
-        //   const crashMonth = finEvent.implementationDetails.crashMonth;
-        //   if (this.monthToSimulate === crashMonth) {
-        //     const crashPercentage =
-        //       finEvent.implementationDetails.crashPercentage;
-        //     const investmentEvents = this.events.filter(
-        //       (finEvent) =>
-        //         finEvent.name == "sip" ||
-        //         finEvent.name == "pre_existing_investment"
-        //     );
-        //     investmentEvents.forEach((investmentEvent) => {
-        //       let existingCrashes =
-        //         investmentEvent.implementationDetails.crashes;
-        //       if (existingCrashes) {
-        //         existingCrashes[crashMonth] = crashPercentage;
-        //       } else {
-        //         let crashToAdd = {};
-        //         crashToAdd[crashMonth] = crashPercentage;
-        //         investmentEvent.implementationDetails.crashes = crashToAdd;
-        //       }
-        //     });
-        //   }
+          return;
+        default:
+          const simulator = this.#getSimulator(finEvent);
+
+          if (simulator) {
+            const { finSituation, comments } =
+              simulator.beforeSimulationProcedure(this.monthToSimulate);
+            this.currentFinSituation = finSituation;
+            this.#addCommentsToCurrentSituation(comments);
+          }
+          return;
+        // case "sip":
+        //   console.log("before simulation processing for sip");
+        //   // TODO: There is scope to refactor these contracts...
+        //   const sipSimulator = new SipSimulator(
+        //     this.currentFinSituation,
+        //     finEvent,
+        //     this.monthlyInflationRate
+        //   );
+        //   { finSituation, comments } =
+        //     sipSimulator.beforeSimulationProcedure(this.monthToSimulate);
+        //   this.currentFinSituation = finSituation;
+        //   console.log("sip finsituation", finSituation);
+        //   this.#addCommentsToCurrentSituation(comments);
+        //   return
+        // case "loan":
+        //   // TODO: There is scope to refactor these contracts...
+        //   const loanSimulator = new LoanSimulator(
+        //     this.currentFinSituation,
+        //     finEvent,
+        //     this.monthlyInflationRate
+        //   );
+        //   { finSituation, comments } =
+        //     loanSimulator.beforeSimulationProcedure(this.monthToSimulate);
+        //   this.currentFinSituation = finSituation;
+        //   console.log("sip finsituation", finSituation);
+        //   this.#addCommentsToCurrentSituation(comments);
+        //   return
       }
     });
   }
@@ -192,7 +228,7 @@ class Simulator {
           );
 
           let { finSituation, comments } =
-            yearlyIncrementSimulator.afterSimulationCallback(
+            yearlyIncrementSimulator.afterSimulationProcedure(
               this.monthToSimulate
             );
           console.log("returned fituation", finSituation);
@@ -293,6 +329,10 @@ class Simulator {
         return finSituation;
       case "investment_credit":
         finSituation.investments.get(ledger.investment_id).unitsHeld +=
+          ledger.amount;
+        return finSituation;
+      case "liability_debit":
+        finSituation.liabilities.get(ledger.liabilityId).amountDue -=
           ledger.amount;
         return finSituation;
     }
@@ -438,11 +478,29 @@ class Simulator {
       investmentSituation.set(finEvent.id, {
         unitsHeld: 100,
         unitPrice: finEvent.implementationDetails.amount / 100,
-        name: finEvent.implementationDetails.name
+        name: finEvent.implementationDetails.name,
       })
     );
 
     this.currentFinSituation.investments = investmentSituation;
+  }
+
+  #setupPreExistingLiabilities() {
+    const preExistingLiabilitiesEvents = this.events.filter(
+      (finEvent) => finEvent.name === "pre_existing_liability"
+    );
+
+    console.log("preExistingLiabilitiesEvents", preExistingLiabilitiesEvents);
+    const liabilities = new Map();
+    preExistingLiabilitiesEvents.forEach((finEvent) =>
+      liabilities.set(finEvent.id, {
+        amountDue: finEvent.amount,
+        name: finEvent.implementationDetails.name,
+        emi: finEvent.emi,
+      })
+    );
+
+    this.currentFinSituation.liabilities = liabilities;
   }
 
   #calculateAssetValue(finSituation) {
@@ -456,6 +514,17 @@ class Simulator {
     }
 
     return assetValue;
+  }
+
+  #calculateLiabilities(finSituation) {
+    let liabilities = finSituation.liabilities;
+    let totalLiabilities = 0;
+
+    for (const [liabilityId, liability] of liabilities.entries()) {
+      totalLiabilities += liability.amountDue;
+    }
+
+    return totalLiabilities;
   }
 }
 export default Simulator;

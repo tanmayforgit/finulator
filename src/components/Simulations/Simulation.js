@@ -38,6 +38,7 @@ const Simulation = (props) => {
           <th>Your Age (approx) </th>
           <th>Bank Balance</th>
           <th>Assets</th>
+          <th>Liabilities</th>
           <th>Actions</th>
           <th>Comments</th>
         </thead>

@@ -9,6 +9,7 @@ import YearlyIncrement from "./YearlyIncrement";
 import PreExistingInvestment from "./PreExistingInvestment";
 import Sip from "./Sip";
 import MarketCrash from "./MarketCrash";
+import Loan from "./Loan";
 // import { FaPlus } from "react-icons/fa";
 const List = () => {
   const openAddEventModal = (finEventName, browserEvent) => {
@@ -85,7 +86,7 @@ const List = () => {
           <tr>
             <td>SIP - Mutual Fund</td>
             <td>
-              Allows you to add monthly SIP
+              Allows you to add monthly SIP. You can add multiple if you want.
             </td>
             <td>
               <button
@@ -103,6 +104,22 @@ const List = () => {
             <td>
               <button
                 onClick={openAddEventModal.bind(this, "market_crash")}
+              >
+                Add
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>Loan</td>
+            <td>
+              Allows you to add a loan. Loan adds to your liabilities. EMIs are autocalculated assuming that it is amortized loan
+              <a href="https://www.investopedia.com/terms/a/amortized_loan.asp">
+                { "  (what are amortized loans?)"}
+              </a>
+            </td>
+            <td>
+              <button
+                onClick={openAddEventModal.bind(this, "loan")}
               >
                 Add
               </button>
@@ -130,6 +147,9 @@ const List = () => {
           )}
           {eventBeingAdded === "market_crash" && (
             <MarketCrash closeModalCallback={closeModal} />
+          )}
+          {eventBeingAdded === "loan" && (
+            <Loan closeModalCallback={closeModal} />
           )}
         </div>
       </Modal>

@@ -5,6 +5,7 @@ import { Fragment, useState } from "react";
 import classes from "components/Table.module.css";
 import SimulationRowComment from "./SimulationRowComment";
 import LedgerRow from "./LedgerRow";
+import Amount from "components/Utility/Amount";
 
 const SimulationRow = (props) => {
   console.log("called with props", props.month);
@@ -28,6 +29,14 @@ const SimulationRow = (props) => {
     <SimulationRowComment comment={comment} />
   ));
 
+  
+  // const bankBalance = Math.round(finSituation.bankBalance);
+  // const assetValue = Math.round(finSituation.assetValue);
+  // const liabilities = Math.round(finSituation.liabilities);
+  // const getDisplayableNumber = (number) => {
+  //   Math.round(number)
+  // } 
+
   return (
     <Fragment>
       <tr>
@@ -39,12 +48,16 @@ const SimulationRow = (props) => {
           {" "}
           <AgeAfterMonths age={userDetails.age} months={month} />{" "}
         </td>
-        <td>{Math.round(finSituation.bankBalance)}</td>
-        <td>{Math.round(finSituation.assetValue)}</td>
+        <td><Amount number={finSituation.bankBalance}/></td>
+        <td><Amount number={finSituation.assetValue}/></td>
+        <td><Amount number={finSituation.totalLiabilities}/></td>
         <td>
           <button onClick={viewDetailsHandler}> View Details</button>
         </td>
-        <td> <ul>{comments}</ul> </td>
+        <td>
+          {" "}
+          <ul>{comments}</ul>{" "}
+        </td>
       </tr>
       <Modal isOpen={detailsModalOpen}>
         <button onClick={closeModal}>Close</button>

@@ -7,12 +7,17 @@ const EventRow = (props) => {
   const finEvent = props.finEvent;
   const dispatchRemoveEvent = useDispatch();
 
+  // accepts "thisIsTheVriable" and returns "this Is The Variable"
+  const getDisplayableAttr = (name) => {
+    return name.split(/(?=[A-Z])/).join(" ");
+  }
+
   const getDefaultDetails = () => {
     console.log("keys", Object.keys(finEvent.implementationDetails));
     return (Object.keys(finEvent.implementationDetails).map((key) => (
-      <li>
+      <li style={{textTransform: "capitalize"}}>
         {" "}
-        {key}: {finEvent.implementationDetails[key]}{" "}
+        {getDisplayableAttr(key)}: {finEvent.implementationDetails[key]}{" "}
       </li>
     )));
   };

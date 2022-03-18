@@ -1,3 +1,4 @@
+import Amount from "components/Utility/Amount";
 const LedgerRow = (props) => {
   const ledger = props.ledger;
   const getDisplayLedgerType = (type) => {
@@ -10,6 +11,8 @@ const LedgerRow = (props) => {
         return "Asset Growth";
       case "investment_credit":
         return "Asset purchase"
+      case "liability_debit":
+        return "Liabilities dealt"
     }
   };
 
@@ -19,7 +22,7 @@ const LedgerRow = (props) => {
         console.log(ledger.multiplier)
         return ((ledger.multiplier - 1) * 100).toFixed(2) + "%";
       default:
-        return ledger.amount;
+        return ledger.amount.toFixed(2);
     }
   };
 
