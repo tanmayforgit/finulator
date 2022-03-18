@@ -10,7 +10,7 @@ class YearlyIncrementSimulator extends Base {
     console.log('yi simulator object', this);
   }
 
-  afterSimulationCallback(simulationMonthNumber) {
+  afterSimulationProcedure(simulationMonthNumber) {
     const [itIsYearEnd, yearNumber] = this.yearInfo(simulationMonthNumber);
     if (itIsYearEnd) {
       const incrementedMonthlyIncome =

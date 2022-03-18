@@ -82,7 +82,7 @@ class SipSimulator extends Base {
     }
   }
 
-  beforeSimulationCallback(simulationMonthNumber) {
+  beforeSimulationProcedure(simulationMonthNumber) {
     if (simulationMonthNumber === this.startMonth) {
       // First time the SIP will be deducted... setting unit price to
       // monthlyAmount/100

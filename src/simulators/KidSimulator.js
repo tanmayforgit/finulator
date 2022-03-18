@@ -156,7 +156,7 @@ class KidSimulator {
     return { ledgers: ledgers, comments: comments };
   }
 
-  beforeSimulationCallback(simulationMonthNumber) {
+  beforeSimulationProcedure(simulationMonthNumber) {
     return {finSituation: this.finSituation, comments: []};
   }
 
