@@ -118,7 +118,7 @@ class KidSimulator {
       ledgers = ledgers.concat([
         {
           type: "bank_balance_debit",
-          amount: this.#getFifteenToEighteenMonthlyExpense(
+          amount: this.#getEighteenToTwntyTwoMonthlyExpense(
             simulationMonthNumber
           ),
           description: "Inflation Adjusted monthly expense for " + this.kidName,
